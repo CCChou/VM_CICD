@@ -1,8 +1,7 @@
 #!/bin/bash
 
 sudo yum install -y wget
-
-# install wget
+sudo yum install -y java-11-openjdk-1:11.0.5.10-2.el8_1.x86_64
 sudo wget -O ~/mysql80-community-release-el7-3.noarch.rpm https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
 
 # install mysql

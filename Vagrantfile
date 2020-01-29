@@ -12,12 +12,27 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "centos/7"
-  config.vm.network "forwarded_port", guest: 8080, host: 18080
-  config.vm.network "forwarded_port", guest: 3000, host: 13000
-  config.vm.provision :shell, path: "install_common.sh"
-  config.vm.provision :shell, path: "install_jenkins.sh"
-  config.vm.provision :shell, path: "install_gitea.sh"
+  config.vm.define "control", primary: true do |control|
+    control.vm.box = "centos/7"
+	control.vm.network "private_network", ip: "10.0.0.3"
+    control.vm.network "forwarded_port", guest: 8080, host: 18080
+    control.vm.network "forwarded_port", guest: 3000, host: 13000
+    control.vm.provision :shell, path: "install_common.sh"
+    control.vm.provision :shell, path: "install_jenkins.sh"
+    control.vm.provision :shell, path: "install_gitea.sh"
+	control.vm.provision :shell, path: "install_docker.sh"
+  end
+  
+  config.vm.define "monitor" do |monitor|
+    monitor.vm.box = "centos/7"
+    monitor.vm.network "private_network", ip: "10.0.0.4"
+	monitor.vm.network "forwarded_port", guest: 8081, host: 18081
+	monitor.vm.provision :shell, path: "install_nexus_repository.sh"
+  end
+  
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 1024
+  end
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
